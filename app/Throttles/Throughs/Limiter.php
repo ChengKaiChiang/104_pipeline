@@ -36,7 +36,7 @@ class Limiter implements Throughable
         $this->max = $max;
     }
 
-    public function handle(LoginPassable $passable, Closure $next): bool
+    public function handle(LoginPassable $passable, Closure $next)
     {
         try {
             if ($this->rateLimiter->tooManyAttempts($this->key($passable->ip), $this->max)) {

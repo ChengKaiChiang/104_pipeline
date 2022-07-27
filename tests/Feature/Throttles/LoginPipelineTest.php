@@ -9,6 +9,8 @@ use Tests\TestCase;
 use Throwable;
 class LoginPipelineTest extends TestCase
 {
+    private $redis;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,7 +49,8 @@ class LoginPipelineTest extends TestCase
         $hub->pipe(new LoginPassable('1.2.3.4', 'whatever'), 'throttle.login');
 
         $actual = $hub->pipe(new LoginPassable('1.2.3.4', 'whatever'), 'throttle.login');
-        $this->assertFalse($actual);
+
+        $this->assertSame($actual, 'pass');
     }
 
     /**
@@ -63,7 +66,7 @@ class LoginPipelineTest extends TestCase
         $hub->pipe(new LoginPassable('1.2.3.4', 'whatever2'), 'throttle.login');
 
         $actual = $hub->pipe(new LoginPassable('1.2.3.4', 'whatever3'), 'throttle.login');
-        $this->assertFalse($actual);
+        $this->assertSame($actual, 'pass');
     }
 
     /**
@@ -101,7 +104,7 @@ class LoginPipelineTest extends TestCase
         $this->redis->flushdb();
 
         $actual = $hub->pipe(new LoginPassable('1.2.3.4', 'whatever4'), 'throttle.login');
-        $this->assertFalse($actual);
+        $this->assertSame($actual, 'pass');
     }
 
     /**
@@ -119,11 +122,11 @@ class LoginPipelineTest extends TestCase
         $hub->pipe(new LoginPassable('1.2.3.4', 'whatever4'), 'throttle.login');
         $hub->pipe(new LoginPassable('1.2.3.5', 'whatever5'), 'throttle.login');
 
-        $this->assertFalse($hub->pipe(new LoginPassable('1.2.3.1', 'whatever1'), 'throttle.login'));
-        $this->assertFalse($hub->pipe(new LoginPassable('1.2.3.2', 'whatever2'), 'throttle.login'));
-        $this->assertFalse($hub->pipe(new LoginPassable('1.2.3.3', 'whatever3'), 'throttle.login'));
-        $this->assertFalse($hub->pipe(new LoginPassable('1.2.3.4', 'whatever4'), 'throttle.login'));
-        $this->assertFalse($hub->pipe(new LoginPassable('1.2.3.5', 'whatever5'), 'throttle.login'));
+        $this->assertSame($hub->pipe(new LoginPassable('1.2.3.1', 'whatever1'), 'throttle.login'), 'pass');
+        $this->assertSame($hub->pipe(new LoginPassable('1.2.3.2', 'whatever2'), 'throttle.login'), 'pass');
+        $this->assertSame($hub->pipe(new LoginPassable('1.2.3.3', 'whatever3'), 'throttle.login'), 'pass');
+        $this->assertSame($hub->pipe(new LoginPassable('1.2.3.4', 'whatever4'), 'throttle.login'), 'pass');
+        $this->assertSame($hub->pipe(new LoginPassable('1.2.3.5', 'whatever5'), 'throttle.login'), 'pass');
     }
 
 }

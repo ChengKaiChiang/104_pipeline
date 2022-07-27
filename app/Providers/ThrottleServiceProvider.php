@@ -27,7 +27,7 @@ class ThrottleServiceProvider extends ServiceProvider
             return $pipeline->send($passable)
                 ->through($limiters)
                 ->then(function () {
-                    return false;
+                    return 'pass';
                 });
         });
     }

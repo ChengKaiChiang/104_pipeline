@@ -7,5 +7,5 @@ use Closure;
 
 interface Throughable
 {
-    public function handle(LoginPassable $passable, Closure $next): bool;
+    public function handle(LoginPassable $passable, Closure $next);
 }
