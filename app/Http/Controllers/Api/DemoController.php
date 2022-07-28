@@ -14,7 +14,7 @@ class DemoController
         $ips = $request->ips();
         $ip = end($ips);
 
-        if ($hub->pipe(new LoginPassable($ip, $loginid), 'throttle.login') === 'pass') {
+        if ($hub->pipe(new LoginPassable($ip, $loginid), 'throttle.login') !== 'pass') {
             return response()->json(['status' => 'block']);
         }
         return response()->json(['status' => 'pass']);
