@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Throttles\LoginPassable;
 use App\Throttles\SetTypeRateLimiter;
+use App\Throttles\Throughs\AllowPid;
+use App\Throttles\Throughs\BlockIp;
 use App\Throttles\Throughs\Limiter;
 use Illuminate\Contracts\Pipeline\Hub as HubContract;
 use Illuminate\Pipeline\Hub;
@@ -22,6 +24,11 @@ class ThrottleServiceProvider extends ServiceProvider
         $hub = $this->app->make(HubContract::class);
 
         $limiters = $this->createLimiters();
+        array_unshift(
+            $limiters,
+            $this->app->make(AllowPid::class),
+            $this->app->make(BlockIp::class)
+        );
 
         $hub->pipeline('throttle.login', function (Pipeline $pipeline, LoginPassable $passable) use ($limiters) {
             return $pipeline->send($passable)
